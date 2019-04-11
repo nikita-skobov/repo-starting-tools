@@ -30,6 +30,8 @@ Options (* indicates it is required):"
   local help_options="    \ \--interactive\ \[ENTER YOUR DESCRIPTION HERE]
     \ \--repo-name \<Parameter>\[ENTER YOUR DESCRIPTION HERE]
     \ \--description \<Parameter>\[ENTER YOUR DESCRIPTION HERE]
+    \ \--email \<Parameter>\[ENTER YOUR DESCRIPTION HERE]
+    \ \--already-repo \<Parameter>\[ENTER YOUR DESCRIPTION HERE]
     \ \--username \<Parameter>\[ENTER YOUR DESCRIPTION HERE]
     \ \--private\ \[ENTER YOUR DESCRIPTION HERE]
     \ \--include-issues\ \[ENTER YOUR DESCRIPTION HERE]
