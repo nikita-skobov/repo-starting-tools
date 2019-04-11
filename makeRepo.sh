@@ -233,8 +233,7 @@ fi
 
 json_data="$json_data}"
 
-echo "POST DATA: "
-echo "$json_data"
-echo ""
 
-curl -u "$username" -H "Accept: application/vnd.github.v3+json" -X POST https://api.github.com/user/repos -d "$json_data"
+resp=$(./makeRemote.sh "$username" "$json_data")
+echo "$resp"
+
