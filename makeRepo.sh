@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
   DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
@@ -59,7 +61,9 @@ Options (* indicates it is required):"
 }
 
 REQ_ARGS=(
+  "already_repo"
   "username"
+  "email"
   "repo_name"
   "description"
   "private"
@@ -72,7 +76,9 @@ REQ_ARGS=(
 )
 
 REQ_ARGS_PROMTS=(
+  "Type 'true' if your current working directory is already a repository (otheriwse hit RETURN)"
   "Enter your username: "
+  "Enter your email: "
   "Enter a repository name: "
   "Enter a description: (hit RETURN if you want to keep it blank)"
   "Type 'true' if you want your repository to be private, otherwise hit RETURN"
@@ -98,8 +104,16 @@ case $key in
 		interactive="true"
 		shift
 		;;
+  --already-repo)
+		already_repo="true"
+		shift
+		;;
 	--repo-name)
 		repo_name="$2"
+		shift 2
+		;;
+  --email)
+		email="$2"
 		shift 2
 		;;
 	--description)
@@ -199,7 +213,51 @@ then
   run_interactive
 fi
 
+resp_args="--username $username --repo-name $repo_name"
 
-resp=$(bash "$DIR/makeRemoteRepository.sh" "--username $username --repo-name $repo_name --homepage $homepage --description $description --license $license --private $private --include-issues $include_issues --include-projects $include_projects --include-wiki $include_wiki --include-readme $include_readme")
+if [ -n "$homepage" ]
+then
+  resp_args="$resp_args --homepage $homepage"
+fi
+if [ -n "$description" ]
+then
+  resp_args="$resp_args --description $description"
+fi
+if [ -n "$license" ]
+then
+  resp_args="$resp_args --license $license"
+fi
+if [ -n "$private" ]
+then
+  resp_args="$resp_args --private $private"
+fi
+if [ -n "$include_issues" ]
+then
+  resp_args="$resp_args --include-issues $include_issues"
+fi
+if [ -n "$include_projects" ]
+then
+  resp_args="$resp_args --include-projects $include_projects"
+fi
+if [ -n "$include_wiki" ]
+then
+  resp_args="$resp_args --include-wiki $include_wiki"
+fi
+if [ -n "$include_readme" ]
+then
+  resp_args="$resp_args --include-readme $include_readme"
+fi
+
+resp=$(bash "$DIR/makeRemoteRepository.sh" "$resp_args")
 echo "$resp"
 
+repo_url="https://github.com/$username/$repo_name.git"
+resp2_args="--username $username --remote-url $repo_url --directory $repo_name --email $email"
+
+if [ "$already_repo" = true ]
+then
+  resp2_args="$resp2_args --already-repo"
+fi
+
+resp2=$(bash "$DIR/setupRepo.sh" "$resp2_args")
+echo "$resp2"
