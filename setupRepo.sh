@@ -125,5 +125,18 @@ git config --local user.email "$email"
 
 git remote add origin "$remote_url"
 
+# check if origin master exists, otherwise it is a new empty origin
+master_exists=$(git ls-remote --heads "$remote_url" master)
+
+if [ -z "$master_exists" ]
+then
+  # if there is no master branch, need to make first commit
+  touch README.md
+  git add README.md
+  git commit -m "first commit"
+  git push -u origin master
+fi
+
+
 git pull origin master
 git branch --set-upstream-to=origin/master master
