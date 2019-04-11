@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
+# DIR is the full path to the directory where this file is.
+# This lets this script make references to the other files
+# without relying on relative paths.
+
 function usage()
 {
   local just_help=$1
@@ -189,51 +200,6 @@ then
 fi
 
 
-json_data="{\"name\":\"$repo_name\""
-
-if [ -n "$description" ]
-then
-  json_data="$json_data, \"description\": \"$description\""
-fi
-
-if [ -n "$homepage" ]
-then
-  json_data="$json_data, \"homepage\": \"$homepage\""
-fi
-
-if [ -n "$license" ]
-then
-  json_data="$json_data, \"license_template\": \"$license\""
-fi
-
-if [[ ( "$private" = true ) || ( "$private" = false ) ]]
-then
-  json_data="$json_data, \"private\": \"$private\""
-fi
-
-if [[ ( "$include_issues" = true ) || ( "$include_issues" = false ) ]]
-then
-  json_data="$json_data, \"has_issues\": \"$include_issues\""
-fi
-
-if [[ ( "$include_projects" = true ) || ( "$include_projects" = false ) ]]
-then
-  json_data="$json_data, \"has_projects\": \"$include_projects\""
-fi
-
-if [[ ( "$include_wiki" = true ) || ( "$include_wiki" = false ) ]]
-then
-  json_data="$json_data, \"has_wiki\": \"$include_wiki\""
-fi
-
-if [[ ( "$include_readme" = true ) || ( "$include_readme" = false ) ]]
-then
-  json_data="$json_data, \"auto_init\": \"$include_readme\""
-fi
-
-json_data="$json_data}"
-
-
-resp=$(./makeRemote.sh "$username" "$json_data")
+resp=$(bash "$DIR/makeRemoteRepository.sh" "--username $username --repo-name $repo_name --homepage $homepage --description $description --license $license --private $private --include-issues $include_issues --include-projects $include_projects --include-wiki $include_wiki --include-readme $include_readme")
 echo "$resp"
 
