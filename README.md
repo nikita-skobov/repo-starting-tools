@@ -5,7 +5,6 @@ A repository with tools to help automate the creation of repositories
 
 * Unix-like systems (linux, mac)
 
-        ```sh
         git clone https://github.com/nikita-skobov/repo-starting-tools.git
         
         # for making a symbolic link:
@@ -15,7 +14,7 @@ A repository with tools to help automate the creation of repositories
         # for installing the scripts manually:
         cd /path/to/repo-starting-tools
         for i in *.sh; do sudo cp "$i" /usr/local/bin/; done # copy all files in repo-starting-tools directory with a .sh extension to /usr/local/bin
-        ```
+
 
 ## Getting Started
 
